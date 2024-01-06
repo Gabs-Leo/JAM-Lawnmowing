@@ -1,10 +1,10 @@
 #Display Settings
-TileSize: 32
+TileSize: 64
 Clamp: false
-ScreenWidth: 336
-ScreenHeight: 252
-ScreenScale: 2
-ShowCollisionMask: false
+ScreenWidth: 1280
+ScreenHeight: 720
+ScreenScale: 1
+ShowCollisionMask: true
 
 #Player Settings
 PlayerMaxLife: 100

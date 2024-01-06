@@ -28,11 +28,11 @@ public class Animation {
 		this.index = startIndex;
 		this.startIndex = startIndex;
 		this.animDelay = animDelay;
-		framePositions.forEach(positions -> images.add(Main.spritesheet.getSprite(positions.get(0), positions.get(1))));
+		framePositions.forEach(positions -> images.add(Main.spritesheet.getSpriteRelative(positions.get(0), positions.get(1))));
 	}
 	
 	public Animation(int startIndex, int animDelay) {
-		coordinates.forEach(coordinate -> images.add(Main.spritesheet.getSprite(coordinate.getX(), coordinate.getY())));
+		coordinates.forEach(coordinate -> images.add(Main.spritesheet.getSpriteRelative(coordinate.getX(), coordinate.getY())));
 		
 		this.startIndex = startIndex;
 		this.index = startIndex;

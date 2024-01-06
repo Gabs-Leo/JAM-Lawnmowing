@@ -30,16 +30,17 @@ public class Enemy extends AliveEntity {
 				leftFrames = new ArrayList<>(),
 				upFrames = new ArrayList<>(),
 				downFrames = new ArrayList<>();
-	
+
+	//TODO solve issue with sprite relative
 	public Enemy () {
 		this.setTargetable(true);
 		this.setLife(60);
 		this.setDamage(20);
 		for (int i = 0; i < 3; i++) {
-			downFrames.add(Main.spritesheet.getSprite(96 + (i) * 32, 0, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
-			leftFrames.add(Main.spritesheet.getSprite(96 + (i) * 32, 32, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
-			rightFrames.add(Main.spritesheet.getSprite(96 + (i) * 32, 64, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
-			upFrames.add(Main.spritesheet.getSprite(96 + (i) * 32, 96, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
+			downFrames.add(Main.spritesheet.getSpriteRelative(96 + (i) * 32, 0, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
+			leftFrames.add(Main.spritesheet.getSpriteRelative(96 + (i) * 32, 32, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
+			rightFrames.add(Main.spritesheet.getSpriteRelative(96 + (i) * 32, 64, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
+			upFrames.add(Main.spritesheet.getSpriteRelative(96 + (i) * 32, 96, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
 		}
 	}
 	

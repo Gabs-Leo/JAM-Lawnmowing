@@ -31,7 +31,7 @@ public class Equipment extends Collectable{
 		this.setEquipmentType(equipmentType);
 		this.setDamageType(damageType);
 		this.setDamage(damage);
-		this.setSprite(Main.spritesheet.getSprite(spritePositions[0], spritePositions[1]));
+		this.setSprite(Main.spritesheet.getSpriteRelative(spritePositions[0], spritePositions[1]));
 		equippedAnimations.forEach(animation -> this.getAnimations().add(animation));
 	}
 	

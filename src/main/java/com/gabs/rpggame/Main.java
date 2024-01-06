@@ -84,11 +84,9 @@ public class Main extends Canvas implements Runnable, KeyListener {
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 			mapper.configure(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES, false);
 			
-			spritesheet = new Spritesheet("/dark_spritesheet.png");
-			
 			GameProperties = mapper.readValue(file, GameProperties.class);
 			//assets = mapper.readValue(file2, Assets.class);
-			
+			/*
 			FileInputStream fis = new FileInputStream(Thread.currentThread().getContextClassLoader().getResource("TestDialogue.xlsx").getFile());
 			XSSFWorkbook wb = new XSSFWorkbook(fis);
 			XSSFSheet sheet = wb.getSheetAt(0);
@@ -100,7 +98,7 @@ public class Main extends Canvas implements Runnable, KeyListener {
 					System.out.println(cell.getStringCellValue());
 				}
 				//dialogs.add(new Dialog().setSpeaker(data.get(0)).setMessage(data.get(0)));
-			}
+			}*/
 		} catch (IOException e) {
 			JOptionPane.showMessageDialog(null, e);
 		}
@@ -115,15 +113,14 @@ public class Main extends Canvas implements Runnable, KeyListener {
 		entities = new ArrayList<Entity>();
 		frontEntities = new ArrayList<Entity>();
 		enemies = new ArrayList<Enemy>();
-		spritesheet = new Spritesheet("/dark.png");
+		spritesheet = new Spritesheet("/sprites/spritesheet.png");
 		damageShots = new ArrayList<>();
 		
 		ui = new HUD();
 		player = new Player();
 		player
 			.setWidth(GameProperties.TileSize)
-			.setHeight(GameProperties.TileSize)
-			.setSprite(spritesheet.getSprite(0, 0, GameProperties.TileSize, GameProperties.TileSize));
+			.setHeight(GameProperties.TileSize);
 		player
 			.setSpeed(4);
 		addKeyListener(this);
@@ -133,7 +130,7 @@ public class Main extends Canvas implements Runnable, KeyListener {
 		
 		state = GameState.MAIN_MENU;
 		
-		Sound.bg.loop();
+		//Sound.bg.loop();
 	};
 	
 	public void eventTick() {
@@ -354,7 +351,19 @@ public class Main extends Canvas implements Runnable, KeyListener {
 		}
 		
 	}
-	
+
+	public static void startGame(){
+		entities = new ArrayList<>();
+		enemies = new ArrayList<>();
+		damageShots = new ArrayList<>();
+
+		Main.world = new World("/maps/map.png");
+		entities.add(player);
+
+		Main.state = GameState.RUNNING;
+		//Sound.bg.loop();
+	}
+
 	public static void closeGame() {
 		Main.frame.dispatchEvent(new WindowEvent(Main.frame, WindowEvent.WINDOW_CLOSING));
 	}

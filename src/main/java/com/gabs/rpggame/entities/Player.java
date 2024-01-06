@@ -53,9 +53,9 @@ public class Player extends AliveEntity {
 		super();
 		for(int i = 0; i < Main.GameProperties.InventorySizeX * Main.GameProperties.InventorySizeY; i++)
 			inventory.add(null);
-		
-		this.setWidth(32)
-			.setHeight(32);
+
+		this.setWidth(Main.GameProperties.TileSize)
+			.setHeight(Main.GameProperties.TileSize);
 		
 		this.setDirection(Direction.DOWN);
 		this.setTargetable(true);
@@ -64,24 +64,24 @@ public class Player extends AliveEntity {
 		this.setArmor(Main.GameProperties.PlayerArmor);
 		
 		downAnimation = new Animation(1, 5, 
-				Main.spritesheet.getSprite(0, 0, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(32, 0, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(64, 0, this.getWidth(), this.getHeight()*2));
+				Main.spritesheet.getSpriteRelative(1, 4, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 4, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 4, this.getWidth(), this.getHeight()*2));
 		
 		leftAnimation = new Animation(1, 5, 
-				Main.spritesheet.getSprite(0, 64, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(32, 64, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(64, 64, this.getWidth(), this.getHeight()*2));
+				Main.spritesheet.getSpriteRelative(1, 0, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 0, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 0, this.getWidth(), this.getHeight()*2));
 		
 		rightAnimation = new Animation(1, 5, 
-				Main.spritesheet.getSprite(0, 64*2, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(32, 64*2, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(64, 64*2, this.getWidth(), this.getHeight()*2));
+				Main.spritesheet.getSpriteRelative(1, 2, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 2, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 2, this.getWidth(), this.getHeight()*2));
 		
 		upAnimation = new Animation(1, 5, 
-				Main.spritesheet.getSprite(0, 64*3, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(32, 64*3, this.getWidth(), this.getHeight()*2),
-				Main.spritesheet.getSprite(64, 64*3, this.getWidth(), this.getHeight()*2));
+				Main.spritesheet.getSpriteRelative(1, 6, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 6, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(1, 6, this.getWidth(), this.getHeight()*2));
 	}
 
 	public void collectItem(Collectable item) {
@@ -218,17 +218,17 @@ public class Player extends AliveEntity {
 	public void render(Graphics g) {
 		if(!this.isTakingDamage()) {
 			if(this.getDirection() == Direction.DOWN) {
-				g.drawImage(getDownAnimation().getImages().get(getDownAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - 32, null);
+				g.drawImage(getDownAnimation().getImages().get(getDownAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 				//if(this.getEquipments().get(4) != null)
 				//	g.drawImage(this.getEquipments().get(4).getAnimations().get(0).getImages().get(getDownAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - 32, null);
 			}else if(this.getDirection() == Direction.UP) {
-				g.drawImage(getUpAnimation().getImages().get(getUpAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - 32, null);
+				g.drawImage(getUpAnimation().getImages().get(getUpAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 			}
 			
 			if (this.getDirection() == Direction.RIGHT) {
-				g.drawImage(getRightAnimation().getImages().get(getRightAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - 32, null);
+				g.drawImage(getRightAnimation().getImages().get(getRightAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 			}else if(this.getDirection() == Direction.LEFT) {
-				g.drawImage(getLeftAnimation().getImages().get(getLeftAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - 32, null);
+				g.drawImage(getLeftAnimation().getImages().get(getLeftAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 			}
 		} else {
 			/*
