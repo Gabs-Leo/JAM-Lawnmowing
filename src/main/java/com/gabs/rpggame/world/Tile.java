@@ -7,7 +7,7 @@ public class Tile {
 	
 	private BufferedImage sprite;
 	private int x,y;
-	private CollisionType type;
+	private CollisionType collisionType;
 	
 	public Tile () {}
 	
@@ -42,12 +42,12 @@ public class Tile {
 		return this;
 	}
 
-	public CollisionType getType() {
-		return type;
+	public CollisionType getCollisionType() {
+		return collisionType;
 	}
 
-	public Tile setType(CollisionType type) {
-		this.type = type;
+	public Tile setCollisionType(CollisionType collisionType) {
+		this.collisionType = collisionType;
 		return this;
 	}
 	

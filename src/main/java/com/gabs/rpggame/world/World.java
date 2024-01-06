@@ -17,7 +17,25 @@ public class World {
 	
 	private static Tile[] tiles;
 	public static int WIDTH, HEIGHT;
-	
+
+	//Rocks
+	private Prop rock1 = new Prop(Main.spritesheet.getSpriteRelative(3, 4));
+	private Prop rock2 = new Prop(Main.spritesheet.getSpriteRelative(3, 5));
+
+	//Streets
+	private Prop streetLeft = new Prop(Main.spritesheet.getSpriteRelative(3, 6), CollisionType.NO_COLLISION);
+	private Prop streetRight = new Prop(Main.spritesheet.getSpriteRelative(4, 6), CollisionType.NO_COLLISION);
+	private Prop streetTop = new Prop(Main.spritesheet.getSpriteRelative(3, 7), CollisionType.NO_COLLISION);
+	private Prop streetDown = new Prop(Main.spritesheet.getSpriteRelative(4, 7), CollisionType.NO_COLLISION);
+
+	//Tree
+	private Prop tree1 = new Prop(Main.spritesheet.getSpriteRelative(4, 0), true, CollisionType.NO_COLLISION);
+	private Prop tree2 = new Prop(Main.spritesheet.getSpriteRelative(5, 0), true, CollisionType.NO_COLLISION);
+	private Prop tree3 = new Prop(Main.spritesheet.getSpriteRelative(4, 1), true, CollisionType.NO_COLLISION);
+	private Prop tree4 = new Prop(Main.spritesheet.getSpriteRelative(5, 1), true, CollisionType.NO_COLLISION);
+	private Prop tree5 = new Prop(Main.spritesheet.getSpriteRelative(4, 2));
+	private Prop tree6 = new Prop(Main.spritesheet.getSpriteRelative(5, 2));
+
 	public World () {}
 	public World(String path) {
 		try {
@@ -41,8 +59,27 @@ public class World {
 					Tile tile = new Tile();
 					tile.setX(xx * Main.GameProperties.TileSize)
 						.setY(yy * Main.GameProperties.TileSize)
-						.setType(CollisionType.NO_COLLISION)
-						.setSprite(Main.spritesheet.getSpriteRelative(3, 0, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
+						.setCollisionType(CollisionType.NO_COLLISION);
+					int random = Main.generateRandomInt(1,20);
+					if(random >= 4){
+						tile.setSprite(
+								Main.spritesheet.getSpriteRelative(
+									3,
+									0,
+									Main.GameProperties.TileSize,
+									Main.GameProperties.TileSize
+								)
+						);
+					} else {
+						tile.setSprite(
+								Main.spritesheet.getSpriteRelative(
+										3,
+										random,
+										Main.GameProperties.TileSize,
+										Main.GameProperties.TileSize
+								)
+						);
+					}
 					/*
 					if(currentTile == 0xFF303030) {
 						tile.setType(CollisionType.BLOCK)
@@ -60,8 +97,51 @@ public class World {
 							.setType(CollisionType.NO_COLLISION)
 							.setSprite(Main.spritesheet.getSprite(0, 288, Main.GameProperties.TileSize, Main.GameProperties.TileSize));
 					}
-					//Player
+
+
 					else*/
+
+					Prop prop = null;
+					if(currentTile == 0xFF000000){
+						prop = new Floor(tile.getSprite());
+					}
+					//Rocks
+					else if (currentTile == 0xFF00D700) {
+						prop = new Prop(rock1);
+					}
+					else if (currentTile == 0xFF00CD00) {
+						prop = new Prop(rock2);
+					}
+
+					//Streets
+					else if (currentTile == 0xFF00FF00) {
+						prop = new Prop(streetLeft);
+					}
+					else if (currentTile == 0xFF00F500) {
+						prop = new Prop(streetRight);
+					}
+					else if (currentTile == 0xFF00e100) {
+						prop = new Prop(streetTop);
+					}
+					else if (currentTile == 0xFF00eb00) {
+						prop = new Prop(streetDown);
+					}
+					//Tree
+					else if (currentTile == 0xFF003200) {
+						prop = new Prop(tree1);
+					}else if (currentTile == 0xFF003300) {
+						prop = new Prop(tree2);
+					}else if (currentTile == 0xFF003400) {
+						prop = new Prop(tree3);
+					}else if (currentTile == 0xFF003500) {
+						prop = new Prop(tree4);
+					}else if (currentTile == 0xFF003600) {
+						prop = new Prop(tree5);
+					}else if (currentTile == 0xFF003700) {
+						prop = new Prop(tree6);
+					}
+
+					//Player
 					if(currentTile == 0xFF0000FF) {
 						Main.player.setX(xx*Main.GameProperties.TileSize);
 						Main.player.setY(yy*Main.GameProperties.TileSize);
@@ -159,6 +239,18 @@ public class World {
 						sword.setMethod(() -> sword.equipTo(Main.player));
 						Main.entities.add(sword);
 					}*/
+
+					if(prop != null){
+						prop
+								.setX(xx * Main.GameProperties.TileSize)
+								.setY(yy * Main.GameProperties.TileSize);
+						if(prop.isFront())
+							Main.frontEntities.add(prop);
+						else
+							Main.entities.add(prop);
+
+						tile.setCollisionType(prop.getCollisionType());
+					}
 					tiles[xx + (yy * WIDTH)] = tile;
 				}
 			}
@@ -172,7 +264,7 @@ public class World {
 		int yStart = Camera.getY() / Main.GameProperties.TileSize;
 		
 		int xFinal = xStart + Main.GameProperties.ScreenWidth*Main.GameProperties.ScreenScale / Main.GameProperties.TileSize;
-		int yFinal = yStart + Main.GameProperties.ScreenHeight*Main.GameProperties.ScreenScale / Main.GameProperties.TileSize;
+		int yFinal = yStart + Main.GameProperties.ScreenHeight*Main.GameProperties.ScreenScale / Main.GameProperties.TileSize*2;
 		//int xFinal = xStart + Main.GameProperties.ScreenWidth / GameProperties.TILE_SIZE;
 		//int yFinal = yStart + Main.GameProperties.ScreenHeight / GameProperties.TILE_SIZE;
 		
@@ -211,10 +303,10 @@ public class World {
 		int y4 = (nextY + y - 1) / y;
 		
 		try {
-			return 	tiles[x1 + y1*World.WIDTH].getType() == CollisionType.NO_COLLISION &&
-					tiles[x2 + y2*World.WIDTH].getType() == CollisionType.NO_COLLISION &&
-					tiles[x3 + y3*World.WIDTH].getType() == CollisionType.NO_COLLISION &&
-					tiles[x4 + y4*World.WIDTH].getType() == CollisionType.NO_COLLISION;
+			return 	tiles[x1 + y1*World.WIDTH].getCollisionType() == CollisionType.NO_COLLISION &&
+					tiles[x2 + y2*World.WIDTH].getCollisionType() == CollisionType.NO_COLLISION &&
+					tiles[x3 + y3*World.WIDTH].getCollisionType() == CollisionType.NO_COLLISION &&
+					tiles[x4 + y4*World.WIDTH].getCollisionType() == CollisionType.NO_COLLISION;
 		}catch(Exception e) {
 			return false;
 		}

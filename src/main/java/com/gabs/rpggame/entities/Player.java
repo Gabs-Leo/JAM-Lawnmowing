@@ -47,6 +47,7 @@ public class Player extends AliveEntity {
 			Main.spritesheet.getSprite(64+256, 96+256, 32, 32));
 	*/
 	private int ammo = 0;
+	private int mowedAmount;
 	private List<Collectable> inventory = new ArrayList<>();
 	
 	public Player() {
@@ -56,7 +57,7 @@ public class Player extends AliveEntity {
 
 		this.setWidth(Main.GameProperties.TileSize)
 			.setHeight(Main.GameProperties.TileSize);
-		
+		this.setSpeed(8);
 		this.setDirection(Direction.DOWN);
 		this.setTargetable(true);
 		this.setMaxLife(Main.GameProperties.PlayerMaxLife);
@@ -327,5 +328,13 @@ public class Player extends AliveEntity {
 
 	public Animation getRightAnimation() {
 		return rightAnimation;
+	}
+
+	public int getMowedAmount() {
+		return mowedAmount;
+	}
+
+	public void setMowedAmount(int mowedAmount) {
+		this.mowedAmount = mowedAmount;
 	}
 }
