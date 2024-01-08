@@ -72,8 +72,8 @@ public class Main extends Canvas implements Runnable, KeyListener {
 
 	public static void main(String args[]) {
 		try {
-			//File file = new File("game-properties.yml");
-			File file = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("game-properties.yml")).getFile());
+			File file = new File("game-properties.yml");
+			//File file = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("game-properties.yml")).getFile());
 			//File file2 = new File(Thread.currentThread().getContextClassLoader().getResource("game-assets.yml").getFile());
 			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -260,7 +260,7 @@ public class Main extends Canvas implements Runnable, KeyListener {
 	 * */
 	public void startFrame() {		
 		this.setPreferredSize(new Dimension(GameProperties.ScreenWidth*GameProperties.ScreenScale, GameProperties.ScreenHeight*GameProperties.ScreenScale));
-		frame = new JFrame("Game #1");
+		frame = new JFrame("Z-Mower");
 		frame.add(this);
 		frame.setResizable(false);
 		frame.pack();
