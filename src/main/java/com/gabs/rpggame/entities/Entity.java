@@ -62,18 +62,18 @@ public abstract class Entity {
 				switch(damageType) {
 					case PHYSICAL_DAMAGE: {
 						int damage = World.calculatePostMitigationDamage(amount, target.getArmor());
-						target.setLife(target.getLife() - damage <= 0 ? 0 : target.getLife() - damage);
+						target.setLife(Math.max(target.getLife() - damage, 0));
 						System.out.println("Dano: " + amount + ", vida restante: " + target.getLife());
 						break;
 					}
 					case MAGICAL_DAMAGE: {
 						int damage = World.calculatePostMitigationDamage(amount, target.getMagicalResistance());
-						target.setLife(target.getLife() - damage <= 0 ? 0 : target.getLife() - damage);
+						target.setLife(Math.max(target.getLife() - damage, 0));
 						break;
 					}
 					case TRUE_DAMAGE: {
 						int damage = amount;
-						target.setLife(target.getLife() - damage <= 0 ? 0 : target.getLife() - damage);
+						target.setLife(Math.max(target.getLife() - damage, 0));
 						break;
 					}
 				}

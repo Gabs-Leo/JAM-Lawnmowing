@@ -1,4 +1,4 @@
-package com.gabs.rpggame.graphics;
+package com.gabs.rpggame.graphics.ui;
 
 import java.awt.Color;
 import java.awt.Graphics;

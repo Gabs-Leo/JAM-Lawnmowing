@@ -14,6 +14,8 @@ public class DamageShot extends Entity{
 	private int speed;
 	private int currentPosition = 0;
 	private int range;
+	private int knockback = Main.GameProperties.TileSize*2;
+	private int duration;
 	
 	@Override
 	public void eventTick() {
@@ -29,26 +31,26 @@ public class DamageShot extends Entity{
 				this.inflictDamage(this.getDamage(), DamageType.PHYSICAL_DAMAGE, enemy);
 				switch(this.direction) {
 				case DOWN:
-					enemy.setY(enemy.getY()+32);
+					enemy.setY(enemy.getY()+knockback);
 					break;
 				case LEFT:
-					enemy.setX(enemy.getX()-32);
+					enemy.setX(enemy.getX()-knockback);
 					break;
 				case RIGHT:
-					enemy.setX(enemy.getX()+32);
+					enemy.setX(enemy.getX()+knockback);
 					break;
 				case UP:
-					enemy.setY(enemy.getY()-32);
+					enemy.setY(enemy.getY()-knockback);
 					break;
 				default:
 					break;
-					
 				}
 					
 			};
 		});
 		
 		if(currentPosition >= range) {
+			Main.player.setAttacking(false);
 			Main.damageShots.remove(this);
 			return;
 		}
@@ -56,8 +58,8 @@ public class DamageShot extends Entity{
 	
 	@Override
 	public void render(Graphics g) {
-		g.setColor(Color.WHITE);
-		g.fillRect(this.getX() - Camera.getX(), this.getY() - Camera.getY(), this.getWidth(), this.getHeight());
+		//g.setColor(Color.WHITE);
+		//g.fillRect(this.getX() - Camera.getX(), this.getY() - Camera.getY(), this.getWidth(), this.getHeight());
 	}
 
 	public int getSpeed() {

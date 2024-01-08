@@ -9,34 +9,30 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.gabs.rpggame.entities.DamageShot;
-import com.gabs.rpggame.entities.Enemy;
+import com.gabs.rpggame.entities.enemies.Enemy;
 import com.gabs.rpggame.entities.Entity;
 import com.gabs.rpggame.entities.Player;
+import com.gabs.rpggame.entities.enemies.EnemySpawner;
 import com.gabs.rpggame.graphics.Dialog;
-import com.gabs.rpggame.graphics.GameOverScreen;
-import com.gabs.rpggame.graphics.HUD;
-import com.gabs.rpggame.graphics.MainMenu;
-import com.gabs.rpggame.graphics.PauseScreen;
+import com.gabs.rpggame.graphics.ui.GameOverScreen;
+import com.gabs.rpggame.graphics.ui.HUD;
+import com.gabs.rpggame.graphics.ui.MainMenu;
+import com.gabs.rpggame.graphics.ui.PauseScreen;
 import com.gabs.rpggame.graphics.Spritesheet;
-import com.gabs.rpggame.graphics.Transition;
+import com.gabs.rpggame.graphics.ui.Transition;
 import com.gabs.rpggame.world.Direction;
 import com.gabs.rpggame.world.EventTrigger;
 import com.gabs.rpggame.world.World;
@@ -58,7 +54,7 @@ public class Main extends Canvas implements Runnable, KeyListener {
 	public static List<Entity> frontEntities;
 	public static List<DamageShot> damageShots;
 	public static List<EventTrigger> eventTriggers = new ArrayList<>();
-	public static List<Dialog> dialogs = new ArrayList<Dialog>();
+	public static List<Dialog> dialogs = new ArrayList<>();
 	
 	public static List<Enemy> enemies;
 	public static Spritesheet spritesheet;
@@ -70,15 +66,14 @@ public class Main extends Canvas implements Runnable, KeyListener {
 	public PauseScreen pauseScreen = new PauseScreen();
 	public Transition transition = new Transition();
 	public MainMenu mainMenu = new MainMenu();
-	
 	private BufferedImage image;
-	
 	public static GameState state;
-	
+	public static EnemySpawner enemySpawner = new EnemySpawner();
+
 	public static void main(String args[]) {
 		try {
 			//File file = new File("game-properties.yml");
-			File file = new File(Thread.currentThread().getContextClassLoader().getResource("game-properties.yml").getFile());
+			File file = new File(Objects.requireNonNull(Thread.currentThread().getContextClassLoader().getResource("game-properties.yml")).getFile());
 			//File file2 = new File(Thread.currentThread().getContextClassLoader().getResource("game-assets.yml").getFile());
 			ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
 			mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -136,9 +131,11 @@ public class Main extends Canvas implements Runnable, KeyListener {
 				}
 				for(int i = 0; i < enemies.size(); i++)
 					enemies.get(i).eventTick();
-				frontEntities.forEach(i -> i.eventTick());
+				frontEntities.forEach(Entity::eventTick);
 				for(int i = 0; i < damageShots.size(); i++)
 					damageShots.get(i).eventTick();
+				if(enemies.isEmpty())
+					enemySpawner.spawnNextWave();
 			}
 			break;
 		case PAUSED:
@@ -164,8 +161,12 @@ public class Main extends Canvas implements Runnable, KeyListener {
 		g.setColor(new Color(0, 0, 0));
 		g.fillRect(0, 0, GameProperties.ScreenWidth, GameProperties.ScreenHeight);
 		
-		if(world != null)
+		//if(world != null)
+		try{
 			world.render(g);
+		} catch(Exception e) {
+			System.out.println("err");
+		}
 		for(int i = 0; i < entities.size(); i++) 
 			entities.get(i).render(g);
 		for(int i = 0; i < enemies.size(); i++) 
@@ -174,7 +175,7 @@ public class Main extends Canvas implements Runnable, KeyListener {
 			frontEntities.get(i).render(g);
 		for(int i = 0; i < damageShots.size(); i++) 
 			damageShots.get(i).render(g);
-		//ui.render(g);
+		ui.render(g);
 		//transition.render(g);
 		//dialogs.get(0).render(g);
 		switch(state) {
@@ -307,23 +308,33 @@ public class Main extends Canvas implements Runnable, KeyListener {
 			} else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
 				player.setDown(true);
 			}
-			
+
 			if(e.getKeyCode() == KeyEvent.VK_Z) {
-				eventTriggers.forEach((i) -> { if(i.isTriggered()) i.action.execute();});
+				player.setAttacking(true);
 			}
 		}
-		
+
+		//Game Over
+		else if(state == GameState.GAME_OVER) {
+			if(e.getKeyCode() == KeyEvent.VK_Z) {
+				startGame();
+			}
+		}
+
+
 		if(e.getKeyCode() == KeyEvent.VK_ESCAPE) {
 			if(state == GameState.PAUSED) {
 				transition.endTransition();
-				Sound.bg.play();
+				//Sound.bg.play();
 				state = GameState.RUNNING;
 			} else if (state == GameState.RUNNING){
-				Sound.bg.stop();
+				//Sound.bg.stop();
 				transition.startTransition();
 				state = GameState.PAUSED;
 			}
 		}
+
+
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
@@ -348,16 +359,24 @@ public class Main extends Canvas implements Runnable, KeyListener {
 	}
 
 	public static void startGame(){
+		player = new Player();
 		entities = new ArrayList<>();
 		enemies = new ArrayList<>();
 		damageShots = new ArrayList<>();
+		enemySpawner = new EnemySpawner();
 
 		Main.world = new World("/maps/map.png");
+		//player.setLife(40);
+		//player.setTakingDamage(false);
+		//player.setMowedAmount(0);
 		entities.add(player);
 
+		enemySpawner.spawnNextWave();
 		Main.state = GameState.RUNNING;
 		//Sound.bg.loop();
 	}
+
+
 
 	public static int generateRandomInt(int min, int max){
 		return (int) ((Math.random() * (max+1 - min)) + min);

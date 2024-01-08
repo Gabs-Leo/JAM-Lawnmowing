@@ -8,10 +8,7 @@ import java.util.Objects;
 import javax.imageio.ImageIO;
 
 import com.gabs.rpggame.Main;
-import com.gabs.rpggame.entities.Enemy;
 import com.gabs.rpggame.entities.Prop;
-import com.gabs.rpggame.entities.collectables.Collectable;
-import com.gabs.rpggame.entities.collectables.Equipment;
 
 public class World {
 	
@@ -35,6 +32,8 @@ public class World {
 	private Prop tree4 = new Prop(Main.spritesheet.getSpriteRelative(5, 1), true, CollisionType.NO_COLLISION);
 	private Prop tree5 = new Prop(Main.spritesheet.getSpriteRelative(4, 2));
 	private Prop tree6 = new Prop(Main.spritesheet.getSpriteRelative(5, 2));
+
+	//Enemies
 
 	public World () {}
 	public World(String path) {
@@ -139,6 +138,8 @@ public class World {
 						prop = new Prop(tree5);
 					}else if (currentTile == 0xFF003700) {
 						prop = new Prop(tree6);
+					}else if (currentTile == 0xFFFF0000) {
+						Main.enemySpawner.getSpawnPoints().add(new Position(xx*Main.GameProperties.TileSize, yy*Main.GameProperties.TileSize));
 					}
 
 					//Player
@@ -198,16 +199,6 @@ public class World {
 						Main.entities.add(prop);
 						
 					//Enemy
-					} else if (currentTile == 0xFFFE0000) {
-						Enemy enemy = new Enemy();
-						enemy.getCollisionMask()
-							.setWidth(16).setHeight(16);
-						enemy
-							.setDamage(20);
-						enemy
-							.setX(xx * Main.GameProperties.TileSize)
-							.setY(yy * Main.GameProperties.TileSize);
-						Main.enemies.add(enemy);
 					}
 					//Food
 					else if(currentTile == 0xFF00ff85) {

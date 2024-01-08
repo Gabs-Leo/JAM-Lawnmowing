@@ -2,6 +2,7 @@ package com.gabs.rpggame.graphics;
 
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -30,7 +31,6 @@ public class Animation {
 		this.animDelay = animDelay;
 		framePositions.forEach(positions -> images.add(Main.spritesheet.getSpriteRelative(positions.get(0), positions.get(1))));
 	}
-	
 	public Animation(int startIndex, int animDelay) {
 		coordinates.forEach(coordinate -> images.add(Main.spritesheet.getSpriteRelative(coordinate.getX(), coordinate.getY())));
 		
@@ -49,9 +49,7 @@ public class Animation {
 	};
 	
 	public Animation(int startIndex, int animDelay, BufferedImage ... images) {
-		for(BufferedImage image : images)
-			this.images.add(image);
-		
+		this.images.addAll(Arrays.asList(images));
 		this.startIndex = startIndex;
 		this.index = startIndex;
 		this.animDelay = animDelay;

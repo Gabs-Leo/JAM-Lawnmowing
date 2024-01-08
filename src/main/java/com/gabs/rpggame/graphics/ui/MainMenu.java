@@ -1,14 +1,12 @@
-package com.gabs.rpggame.graphics;
+package com.gabs.rpggame.graphics.ui;
 
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.event.WindowEvent;
 
-import com.gabs.rpggame.GameState;
 import com.gabs.rpggame.Main;
+import com.gabs.rpggame.graphics.UI;
 import com.gabs.rpggame.world.Direction;
-import com.gabs.rpggame.world.World;
 
 public class MainMenu implements UI {
 	

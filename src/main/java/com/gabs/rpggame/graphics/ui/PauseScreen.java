@@ -1,4 +1,4 @@
-package com.gabs.rpggame.graphics;
+package com.gabs.rpggame.graphics.ui;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -6,6 +6,7 @@ import java.awt.Graphics;
 
 import com.gabs.rpggame.GameState;
 import com.gabs.rpggame.Main;
+import com.gabs.rpggame.graphics.UI;
 import com.gabs.rpggame.world.Direction;
 
 public class PauseScreen implements UI {

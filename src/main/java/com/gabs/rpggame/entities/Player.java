@@ -25,6 +25,11 @@ public class Player extends AliveEntity {
 	private Animation leftAnimation;
 	private Animation rightAnimation;
 	private Animation upAnimation;
+
+	private Animation damageDownAnimation;
+	private Animation damageLeftAnimation;
+	private Animation damageRightAnimation;
+	private Animation damageUpAnimation;
 	/*
 	private Animation damageDownAnimation = new Animation(1, 5, 
 			Main.spritesheet.getSprite(0+256, 0+256, this.getWidth(), this.getHeight()),
@@ -49,7 +54,10 @@ public class Player extends AliveEntity {
 	private int ammo = 0;
 	private int mowedAmount;
 	private List<Collectable> inventory = new ArrayList<>();
-	
+
+	private int damageDelay = 1;
+	private int damageTimer = 0;
+
 	public Player() {
 		super();
 		for(int i = 0; i < Main.GameProperties.InventorySizeX * Main.GameProperties.InventorySizeY; i++)
@@ -83,6 +91,26 @@ public class Player extends AliveEntity {
 				Main.spritesheet.getSpriteRelative(1, 6, this.getWidth(), this.getHeight()*2),
 				Main.spritesheet.getSpriteRelative(1, 6, this.getWidth(), this.getHeight()*2),
 				Main.spritesheet.getSpriteRelative(1, 6, this.getWidth(), this.getHeight()*2));
+
+		damageDownAnimation = new Animation(1, 5,
+				Main.spritesheet.getSpriteRelative(16, 4, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 4, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 4, this.getWidth(), this.getHeight()*2));
+
+		damageLeftAnimation = new Animation(1, 5,
+				Main.spritesheet.getSpriteRelative(16, 0, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 0, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 0, this.getWidth(), this.getHeight()*2));
+
+		damageRightAnimation = new Animation(1, 5,
+				Main.spritesheet.getSpriteRelative(16, 2, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 2, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 2, this.getWidth(), this.getHeight()*2));
+
+		damageUpAnimation = new Animation(1, 5,
+				Main.spritesheet.getSpriteRelative(16, 6, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 6, this.getWidth(), this.getHeight()*2),
+				Main.spritesheet.getSpriteRelative(16, 6, this.getWidth(), this.getHeight()*2));
 	}
 
 	public void collectItem(Collectable item) {
@@ -179,35 +207,39 @@ public class Player extends AliveEntity {
 		}
 		
 		if(this.isAttacking()) {
-			this.setAttacking(false);
 			DamageShot attack = new DamageShot();
-			attack.setWidth(32)
-			  .setHeight(32);
+			attack.setWidth(Main.GameProperties.TileSize)
+			  .setHeight(Main.GameProperties.TileSize);
 			attack.setDirection(direction)
 				  .setSpeed(5)
-				  .setRange(10)
+				  .setRange(5)
 				  .setDamage(20);
 			if(this.direction == Direction.RIGHT) {
 				attack
-				  .setX(this.getX()+this.getWidth()/2)
+				  .setX(this.getX()+this.getWidth())
 				  .setY(this.getY());
 			} else if(this.direction == Direction.LEFT) {
 				attack
-				  .setX(this.getX()-this.getWidth()/2)
+				  .setX(this.getX()-this.getWidth())
 				  .setY(this.getY());
 			} else if(this.direction == Direction.UP) {
 				attack
 				  .setX(this.getX())
-				  .setY(this.getY()-this.getWidth()/2);
+				  .setY(this.getY()-this.getWidth());
 			} else if(this.direction == Direction.DOWN) {
 				attack
 				  .setX(this.getX())
-				  .setY(this.getY()+this.getWidth()/2);
+				  .setY(this.getY()+this.getWidth());
 			}
 
 			Main.damageShots.add(attack);
 		}
-		
+		if(this.isTakingDamage()){
+			damageTimer++;
+			if(damageTimer >= damageDelay*60){
+				this.setTakingDamage(false);
+			}
+		}
 		if(this.getLife() <= 0) {
 			Main.state = GameState.GAME_OVER;
 		}
@@ -232,18 +264,18 @@ public class Player extends AliveEntity {
 				g.drawImage(getLeftAnimation().getImages().get(getLeftAnimation().getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 			}
 		} else {
-			/*
+
 			if(this.getDirection() == Direction.DOWN) {
-				g.drawImage(damageDownAnimation.getImages().get(damageDownAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY(), null);
+				g.drawImage(damageDownAnimation.getImages().get(damageDownAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 			}else if(this.getDirection() == Direction.UP) {
-				g.drawImage(damageUpAnimation.getImages().get(damageUpAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY(), null);
+				g.drawImage(damageUpAnimation.getImages().get(damageUpAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 			}
 			
 			if (this.getDirection() == Direction.RIGHT) {
-				g.drawImage(damageRightAnimation.getImages().get(damageRightAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY(), null);
+				g.drawImage(damageRightAnimation.getImages().get(damageRightAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
 			}else if(this.getDirection() == Direction.LEFT) {
-				g.drawImage(damageLeftAnimation.getImages().get(damageLeftAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY(), null);
-			}*/
+				g.drawImage(damageLeftAnimation.getImages().get(damageLeftAnimation.getIndex()), this.getX() - Camera.getX(), this.getY() - Camera.getY() - Main.GameProperties.TileSize, null);
+			}
 		}
 		super.render(g);
 	}
